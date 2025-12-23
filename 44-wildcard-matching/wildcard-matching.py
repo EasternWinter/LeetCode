@@ -1,17 +1,24 @@
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
-        n = len(s)
-        m = len(p)
-        dp = [[False] * (m + 1) for _ in range(n + 1)]
-        dp[0][0] = True
-        for i in range(n + 1):
-            for j in range(1, m + 1):
-                if i == 0:
-                    dp[i][j] = ((j > 0 and dp[i][j - 1]) or j == 0) and (p[j - 1] == '*')
-                elif p[j - 1] == '?' or s[i - 1] == p[j - 1]:
-                    dp[i][j] = dp[i - 1][j - 1]
-                
-                elif p[j - 1] == '*':
-                    dp[i][j] = dp[i - 1][j] or dp[i][j - 1]
-        
-        return dp[n][m]
+        i = 0
+        j = 0
+        star = -1
+        match = 0
+
+        while i < len(s):
+            if j < len(p) and (p[j] == '?' or p[j] == s[i]):
+                i += 1
+                j += 1
+            elif j < len(p) and p[j] == '*':
+                star = j
+                match = i
+                j += 1
+            elif star != -1:
+                j = star + 1
+                match += 1
+                i = match
+            else:
+                return False
+        while j < len(p) and p[j] == '*':
+            j += 1
+        return j == len(p)
